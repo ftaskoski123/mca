@@ -1,78 +1,67 @@
-class Product {
-    constructor(name, domestic, price, description, weight) {
-      this.name = name;
-      this.domestic = domestic;
-      this.price = price;
-      this.description = description;
-      this.weight = weight;
+var Product = /** @class */ (function () {
+    function Product(name, domestic, price, description, weight) {
+        this.name = name;
+        this.domestic = domestic;
+        this.price = price;
+        this.description = description;
+        this.weight = weight;
     }
-  
-    getPrice() {
-      return `$${this.price.toFixed(1)}`;
+    Product.prototype.getPrice = function () {
+        return "$".concat(this.price.toFixed(1));
+    };
+    Product.prototype.getWeight = function () {
+        return this.weight ? "".concat(this.weight, "g") : 'N/A';
+    };
+    Product.prototype.getInfo = function () {
+        return "... ".concat(this.name, "\nPrice: ").concat(this.getPrice(), "\n").concat(this.description, "\nWeight: ").concat(this.getWeight());
+    };
+    return Product;
+}());
+var Inventory = /** @class */ (function () {
+    function Inventory() {
+        this.products = [];
     }
-  
-    getWeight() {
-      return this.weight ? `${this.weight}g` : 'N/A';
-    }
-  
-    getInfo() {
-      return `... ${this.name}\nPrice: ${this.getPrice()}\n${this.description}\nWeight: ${this.getWeight()}`;
-    }
-  }
-  
-  class Inventory {
-    constructor() {
-      this.products = [];
-    }
-  
-    addProduct(product) {
-      this.products.push(product);
-    }
-  
-    getProductsByCategory(isDomestic) {
-      return this.products.filter(product => product.domestic === isDomestic);
-    }
-  
-    getTotalCost(isDomestic) {
-      const products = this.getProductsByCategory(isDomestic);
-      return products.reduce((total, product) => total + product.price, 0);
-    }
-  
-    getTotalCount(isDomestic) {
-      const products = this.getProductsByCategory(isDomestic);
-      return products.length;
-    }
-  
-    displayProducts(isDomestic) {
-      const products = this.getProductsByCategory(isDomestic);
-      const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name));
-      return sortedProducts.map(product => product.getInfo()).join('\n');
-    }
-  
-    displayInventory() {
-      console.log(`. Domestic`);
-      console.log(this.displayProducts(true));
-      console.log(`. Imported`);
-      console.log(this.displayProducts(false));
-      console.log(`Domestic cost: $${this.getTotalCost(true).toFixed(1)}`);
-      console.log(`Imported cost: $${this.getTotalCost(false).toFixed(1)}`);
-      console.log(`Domestic count: ${this.getTotalCount(true)}`);
-      console.log(`Imported count: ${this.getTotalCount(false)}`);
-    }
-  }
-  
-  fetch('https://interview-task-api.mca.dev/qr-scanner-codes/alpha-qr-gFpwhsQ8fkY1')
-    .then(response => response.json())
-    .then(response => {
-      const inventory = new Inventory();
-  
-      response.forEach(item => {
-        const product = new Product(item.name, item.domestic, item.price, item.description, item.weight);
+    Inventory.prototype.addProduct = function (product) {
+        this.products.push(product);
+    };
+    Inventory.prototype.getProductsByCategory = function (isDomestic) {
+        return this.products.filter(function (product) { return product.domestic === isDomestic; });
+    };
+    Inventory.prototype.getTotalCost = function (isDomestic) {
+        var products = this.getProductsByCategory(isDomestic);
+        return products.reduce(function (total, product) { return total + product.price; }, 0);
+    };
+    Inventory.prototype.getTotalCount = function (isDomestic) {
+        var products = this.getProductsByCategory(isDomestic);
+        return products.length;
+    };
+    Inventory.prototype.displayProducts = function (isDomestic) {
+        var products = this.getProductsByCategory(isDomestic);
+        var sortedProducts = products.sort(function (a, b) { return a.name.localeCompare(b.name); });
+        return sortedProducts.map(function (product) { return product.getInfo(); }).join('\n');
+    };
+    Inventory.prototype.displayInventory = function () {
+        console.log(". Domestic");
+        console.log(this.displayProducts(true));
+        console.log(". Imported");
+        console.log(this.displayProducts(false));
+        console.log("Domestic cost: $".concat(this.getTotalCost(true).toFixed(1)));
+        console.log("Imported cost: $".concat(this.getTotalCost(false).toFixed(1)));
+        console.log("Domestic count: ".concat(this.getTotalCount(true)));
+        console.log("Imported  count: ".concat(this.getTotalCount(false)));
+    };
+    return Inventory;
+}());
+fetch('https://interview-task-api.mca.dev/qr-scanner-codes/alpha-qr-gFpwhsQ8fkY1')
+    .then(function (response) { return response.json(); })
+    .then(function (response) {
+    var inventory = new Inventory();
+    response.forEach(function (item) {
+        var product = new Product(item.name, item.domestic, item.price, item.description, item.weight);
         inventory.addProduct(product);
-      });
-  
-      inventory.displayInventory();
-    })
-    .catch(error => {
-      console.error(error);
     });
+    inventory.displayInventory();
+})
+    .catch(function (error) {
+    console.error(error);
+});
